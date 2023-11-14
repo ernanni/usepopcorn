@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import Summary from '../Summary';
-import WatchedMovieList from '../WatchedMovieList';
 
-export default function WatchedBox({ watched, average }) {
+export default function WatchedBox({ children }) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -10,12 +8,7 @@ export default function WatchedBox({ watched, average }) {
       <button className="btn-toggle" onClick={() => setIsOpen((open) => !open)}>
         {isOpen ? '–' : '+'}
       </button>
-      {isOpen && (
-        <>
-          <Summary average={average} watched={watched} />
-          <WatchedMovieList watched={watched} />
-        </>
-      )}
+      {isOpen && children}
     </div>
   );
 }
