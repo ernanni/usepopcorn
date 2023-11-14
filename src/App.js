@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import {
-  ListBox,
+  Box,
   Main,
   MoviesList,
   NavBar,
   NumResults,
   Summary,
   SearchBar,
-  WatchedBox,
   WatchedMovieList,
 } from './components';
 
@@ -71,13 +70,13 @@ export default function App() {
         <NumResults movies={movies} />
       </NavBar>
       <Main>
-        <ListBox>
+        <Box>
           <MoviesList movies={movies} />
-        </ListBox>
-        <WatchedBox>
+        </Box>
+        <Box>
           <Summary average={average} watched={watched} />
           <WatchedMovieList watched={watched} />
-        </WatchedBox>
+        </Box>
       </Main>
     </>
   );
