@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { baseURL } from './api';
 import {
   Box,
   ErrorMessage,
@@ -65,7 +66,6 @@ const average = (arr) =>
 
 //const KEY = '5bbb40c4'; //key not working
 //const KEY = 'f84fc31d'; //Jonas' key
-const KEY = '92a9ae30';
 
 export default function App() {
   const [query, setQuery] = useState('inception');
@@ -104,9 +104,7 @@ export default function App() {
       try {
         setIsLoading(true);
         setError('');
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
-        );
+        const res = await fetch(`${baseURL}&s=${query}`);
 
         if (!res.ok) throw new Error('Movie not found');
         const data = await res.json();

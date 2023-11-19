@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { baseURL } from '../../api';
 import StarRating from '../../StarRating';
 import Loader from '../Loader';
 
@@ -22,9 +23,7 @@ export default function MovieDetails({ selectedId, onCloseMovie }) {
   useEffect(() => {
     async function getMovieDetails() {
       setIsLoading(true);
-      const res = await fetch(
-        `http://www.omdbapi.com/?apikey=92a9ae30&i=${selectedId}`
-      );
+      const res = await fetch(`${baseURL}&i=${selectedId}`);
       const data = await res.json();
       setMovie(data);
       setIsLoading(false);
