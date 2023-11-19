@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { baseURL } from '../../api';
 import StarRating from '../../StarRating';
 import Loader from '../Loader';
+import { useKey } from '../../hooks';
 
 export default function MovieDetails({
   selectedId,
@@ -45,18 +46,7 @@ export default function MovieDetails({
     onCloseMovie();
   }
 
-  useEffect(() => {
-    function callback(e) {
-      if (e.code === 'Escape') {
-        onCloseMovie();
-      }
-    }
-
-    document.addEventListener('keydown', callback);
-    return function () {
-      document.removeEventListener('keydown', callback);
-    };
-  }, [onCloseMovie]);
+  useKey('Escape', onCloseMovie);
 
   useEffect(() => {
     async function getMovieDetails() {
