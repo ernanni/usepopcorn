@@ -68,7 +68,7 @@ const average = (arr) =>
 //const KEY = 'f84fc31d'; //Jonas' key
 
 export default function App() {
-  const [query, setQuery] = useState('inception');
+  const [query, setQuery] = useState('');
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -99,20 +99,37 @@ export default function App() {
     setSelectedId(null);
   }
 
+  function handleAddWatchedMovie(movie) {
+    setWatched((watched) => [...watched, movie]);
+  }
+
+  function handleRemoveWatchedMovie(imdbID) {
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== imdbID));
+  }
+
   useEffect(() => {
+    //controlling race conditions
+    const controller = new AbortController();
+
     async function fetchMovies() {
       try {
         setIsLoading(true);
         setError('');
-        const res = await fetch(`${baseURL}&s=${query}`);
+        const res = await fetch(`${baseURL}&s=${query}`, {
+          signal: controller.signal,
+        });
 
         if (!res.ok) throw new Error('Movie not found');
         const data = await res.json();
         if (data.Response === 'False') throw new Error('Movie not found');
 
         setMovies(data.Search);
+        setError('');
       } catch (e) {
-        setError(e.message);
+        if (e.name !== 'AbortError') {
+          console.error(e.message);
+          setError(e.message);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -124,6 +141,10 @@ export default function App() {
       return;
     }
     fetchMovies();
+
+    return function () {
+      controller.abort();
+    };
   }, [query]);
 
   return (
@@ -143,13 +164,18 @@ export default function App() {
         <Box>
           {selectedId ? (
             <MovieDetails
-              onCloseMovie={handleCloseMovie}
               selectedId={selectedId}
+              watched={watched}
+              onCloseMovie={handleCloseMovie}
+              onAddWatched={handleAddWatchedMovie}
             />
           ) : (
             <>
               <Summary average={average} watched={watched} />
-              <WatchedMovieList watched={watched} />
+              <WatchedMovieList
+                watched={watched}
+                onRemoveWatchedMovie={handleRemoveWatchedMovie}
+              />
             </>
           )}
         </Box>
