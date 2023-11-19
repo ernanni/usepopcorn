@@ -4,8 +4,20 @@ export default function SearchBar({ query, setQuery }) {
   const inputElement = useRef(null);
 
   useEffect(() => {
-    inputElement.current.focus();
-  }, []);
+    function callback(e) {
+      if (document.activeElement === inputElement.current) return;
+
+      if (e.code === 'Enter') {
+        inputElement.current.focus();
+        setQuery('');
+      }
+    }
+
+    document.addEventListener('keydown', callback);
+    return function () {
+      document.removeEventListener('keydown', callback);
+    };
+  }, [setQuery]);
 
   return (
     <input

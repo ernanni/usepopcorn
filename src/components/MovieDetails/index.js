@@ -51,8 +51,8 @@ export default function MovieDetails({
         onCloseMovie();
       }
     }
-    document.addEventListener('keydown', callback);
 
+    document.addEventListener('keydown', callback);
     return function () {
       document.removeEventListener('keydown', callback);
     };
