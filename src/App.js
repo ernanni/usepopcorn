@@ -8,8 +8,8 @@ import {
   MoviesList,
   NavBar,
   NumResults,
-  Summary,
   SearchBar,
+  Summary,
   WatchedMovieList,
 } from './components';
 import { useLocalStorage, useMovies } from './hooks';
