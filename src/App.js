@@ -4,6 +4,7 @@ import {
   ErrorMessage,
   Loader,
   Main,
+  MovieDetails,
   MoviesList,
   NavBar,
   NumResults,
@@ -63,25 +64,51 @@ const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 //const KEY = '5bbb40c4'; //key not working
-const KEY = 'f84fc31d';
+//const KEY = 'f84fc31d'; //Jonas' key
+const KEY = '92a9ae30';
 
 export default function App() {
+  const [query, setQuery] = useState('inception');
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [query, setQuery] = useState('hduskahuk');
+  const [selectedId, setSelectedId] = useState(null);
+
+  /* -- useEffect on Component lifecycle --
+  useEffect(() => {
+    console.log('After initial render');
+  }, []);
+
+  useEffect(() => {
+    console.log('After every render');
+  });
+
+  useEffect(() => {
+    console.log('After query opdates');
+  }, [query]);
+
+  console.log('During render');
+*/
+
+  function handleSelectMovie(id) {
+    setSelectedId((selectedId) => (id === selectedId ? null : id));
+  }
+
+  function handleCloseMovie() {
+    setSelectedId(null);
+  }
 
   useEffect(() => {
     async function fetchMovies() {
       try {
         setIsLoading(true);
+        setError('');
         const res = await fetch(
           `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
         );
 
-        if (!res.ok)
-          throw new Error('Somethign when wrong with fetching movies');
+        if (!res.ok) throw new Error('Movie not found');
         const data = await res.json();
         if (data.Response === 'False') throw new Error('Movie not found');
 
@@ -93,24 +120,40 @@ export default function App() {
       }
     }
 
+    if (query.length < 3) {
+      setMovies([]);
+      setError('');
+      return;
+    }
     fetchMovies();
-  }, []);
+  }, [query]);
 
   return (
     <>
       <NavBar>
-        <SearchBar />
+        <SearchBar query={query} setQuery={setQuery} />
         <NumResults movies={movies} />
       </NavBar>
       <Main>
         <Box>
           {isLoading && <Loader />}
-          {!isLoading && !error && <MoviesList movies={movies} />}
+          {!isLoading && !error && (
+            <MoviesList onSelectMovie={handleSelectMovie} movies={movies} />
+          )}
           {error && <ErrorMessage message={error} />}
         </Box>
         <Box>
-          <Summary average={average} watched={watched} />
-          <WatchedMovieList watched={watched} />
+          {selectedId ? (
+            <MovieDetails
+              onCloseMovie={handleCloseMovie}
+              selectedId={selectedId}
+            />
+          ) : (
+            <>
+              <Summary average={average} watched={watched} />
+              <WatchedMovieList watched={watched} />
+            </>
+          )}
         </Box>
       </Main>
     </>

@@ -3,6 +3,7 @@ import ErrorMessage from './ErrorMessage';
 import Loader from './Loader';
 import Logo from './Logo';
 import Main from './Main';
+import MovieDetails from './MovieDetails';
 import MoviesList from './MoviesList';
 import NavBar from './NavBar';
 import NumResults from './NumResults';
@@ -16,6 +17,7 @@ export {
   Loader,
   Logo,
   Main,
+  MovieDetails,
   MoviesList,
   NavBar,
   NumResults,
